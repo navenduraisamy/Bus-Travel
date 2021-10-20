@@ -1,4 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
-
+<div class="container">
+    <div class="row mt-md-5">
+        <div class="col-md-6"></div>
+        <div class="col-md-6">
+            <form method="POST">
+                <div class="form-group">
+                  <label for="source">Start Location</label>
+                  <input type="text" class="form-control" id="source" name="source" placeholder="Enter where you are">
+                </div>
+                <div class="form-group">
+                  <label for="destination">End location</label>
+                  <input type="text" class="form-control" id="destination" name="destination" placeholder="Enter where you want to go">
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">Get Bus Sequence</button>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

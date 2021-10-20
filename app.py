@@ -21,12 +21,12 @@ cbe_transport = BusRoute()
 
 @app.route('/', methods = ['GET','POST'])
 def home():
-    if request.method == 'GET':
-        """
+    if request.method == 'POST':
+       
         src = request.form['source']
         des = request.form['destination']
-        """
-        src,des = "sulur","ramakrishna"
+       
+        #src,des = "sulur","ramakrishna"
         minShifts = cbe_transport.numBusesToDestination(src,des)
 
         if minShifts>0:
@@ -41,7 +41,7 @@ def home():
                 j+=1
 
             travelDetails = {'bsd':bsd,'minShifts':minShifts,'busesToTake':busesToTake,'shiftBusLocations':shiftBusLocations}
-            return redirect(url_for('myTravel',travelDetails = travelDetails))
+            return render_template('myTravel.html',travelDetails = travelDetails)
         else:
             flash("Your travel is not possible")
             return redirect(url_for('home'))
@@ -50,12 +50,6 @@ def home():
 @app.route('/addBus')
 def addBus():
     return render_template('addbus.html')
-
-@app.route('/myTravel')
-def myTravel():
-    travelDetails = request.args.get('travelDetails', None)
-    print(travelDetails)
-    return render_template('myTravel.html',travelDetails = travelDetails)
 
 if __name__ == "__main__":
     buses = db.collection('buses').get()
