@@ -26,26 +26,31 @@ def home():
         src = request.form['source']
         des = request.form['destination']
        
-        #src,des = "sulur","ramakrishna"
-        minShifts = cbe_transport.numBusesToDestination(src,des)
+        if src!="" and des!="":
+            minShifts = cbe_transport.numBusesToDestination(src,des)
 
-        if minShifts>0:
-            busesToTake = cbe_transport.takeBuses(src,des)
-            shiftBusLocations = cbe_transport.shiftsAt(busesToTake)
-            shiftBusLocations = [src]+shiftBusLocations+[des]
-            bsd = []
-            i,j = 0,1
-            while i<minShifts:
-                bsd.append((busesToTake[i],shiftBusLocations[i],shiftBusLocations[j]))
-                i+=1
-                j+=1
+            if minShifts>0:
+                busesToTake = cbe_transport.takeBuses(src,des)
+                shiftBusLocations = cbe_transport.shiftsAt(busesToTake)
+                shiftBusLocations = [src]+shiftBusLocations+[des]
+                bsd = []
+                i,j = 0,1
+                while i<minShifts:
+                    bsd.append((busesToTake[i],shiftBusLocations[i],shiftBusLocations[j]))
+                    i+=1
+                    j+=1
 
-            travelDetails = {'bsd':bsd,'minShifts':minShifts,'busesToTake':busesToTake,'shiftBusLocations':shiftBusLocations}
-            return render_template('myTravel.html',travelDetails = travelDetails)
-        else:
-            flash("Your travel is not possible")
-            return redirect(url_for('home'))
-    return render_template('index.html')
+                travelDetails = {'bsd':bsd,'minShifts':minShifts,'busesToTake':busesToTake,'shiftBusLocations':shiftBusLocations}
+                return render_template('myTravel.html',travelDetails = travelDetails)
+            else:
+                flash("Your travel is not possible")
+                return redirect(url_for('home'))
+    buses = db.collection('buses').get()
+    places = set()
+    for doc in buses:
+        bus = doc.to_dict()
+        places.update(bus['busRoute'])
+    return render_template('index.html',places = places)
 
 @app.route('/addBus')
 def addBus():
