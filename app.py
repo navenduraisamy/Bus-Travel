@@ -1,15 +1,7 @@
 from flask import *
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
 from busroute import BusRoute
+import pandas as pd
 
-
-cred = credentials.Certificate("serviceAccountKey.json")
-firebase_admin.initialize_app(cred)
-
-#firestore client
-db = firestore.client()
 
 #flask app
 app = Flask(__name__,template_folder="templates",static_url_path="/static")
@@ -45,11 +37,9 @@ def home():
             else:
                 flash("Your travel is not possible")
                 return redirect(url_for('home'))
-    buses = db.collection('buses').get()
     places = set()
-    for doc in buses:
-        bus = doc.to_dict()
-        places.update(bus['busRoute'])
+    for route in cbe_transport.busRoutes:
+        places.update(route)
     return render_template('index.html',places = places)
 
 @app.route('/addBus')
@@ -57,8 +47,10 @@ def addBus():
     return render_template('addbus.html')
 
 if __name__ == "__main__":
-    buses = db.collection('buses').get()
-    for doc in buses:
-        bus = doc.to_dict()
-        cbe_transport.addBus(bus['busName'],bus['busRoute'])
+    df = pd.read_csv('static/dataset/buses.csv')
+    for index, row in df.iterrows():
+        #print(row['Bus No'], row['Via'])
+        busName = row['Bus No']
+        busRoute = row['Via'].split(',')
+        cbe_transport.addBus(busName,busRoute)
     app.run(debug=True)

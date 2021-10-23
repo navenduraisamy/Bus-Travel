@@ -73,7 +73,7 @@ class BusRoute:
             for bus in self.adj[busId]:
                 if bus not in visited:
                     dfs(bus,sofar+[self.nameMappings[busId]])
-            visited.remove(busId)
+            #visited.remove(busId)
         
         for i in range(self.busCount):
             if source in self.busRoutes[i]:
