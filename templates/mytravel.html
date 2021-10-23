@@ -1,9 +1,38 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container">
-    <div class="row">
-        <div class="col-6">
-           {% print(travelDetails['bsd']) %}
+    <div class="row mt-5">
+        <div class="col-md-5">
+            <div class="alert alert-success text-center py-2 mt-3" role="alert">
+                {% if travelDetails['minShifts'] == 1 %}
+                    You must board atlest {{travelDetails['minShifts']}} bus to reach your destination
+                {% else %}
+                    You must board atlest {{travelDetails['minShifts']}} buses to reach your destination
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-7">
+            <ul class="timeline">
+                {% for item in travelDetails['bsd'] %}
+                    <li>
+                        <div class="direction-r">
+                            <div class="flag-wrapper">
+                                <span class="flag">{{item[1].title()}}</span>
+                                <span class="time-wrapper"><span class="time">{{item[0]}}</span></span>
+                            </div>
+                            <div class="desc">Board from {{item[1].title()}} to {{item[2].title()}} through Bus {{item[0].title()}}</div>
+                        </div>
+                    </li>
+                {% endfor %}
+                <li>
+                    <div class="direction-r">
+                        <div class="flag-wrapper">
+                            <span class="flag">{{travelDetails['bsd'][-1][-1].title()}}</span>
+                        </div>
+                        <div class="desc">Your destination has been reached.</div>
+                    </div>
+                </li>
+            </ul>
         </div>
     </div>
 </div>
