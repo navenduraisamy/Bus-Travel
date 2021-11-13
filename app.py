@@ -20,18 +20,20 @@ def home():
        
         if src!="" and des!="":
             minShifts = cbe_transport.numBusesToDestination(src,des)
-
+            print(minShifts)
             if minShifts>0:
-                busesToTake = cbe_transport.takeBuses(src,des)
+                busesToTake = cbe_transport.takeBuses(src,des,minShifts)
                 shiftBusLocations = cbe_transport.shiftsAt(busesToTake)
                 shiftBusLocations = [src]+shiftBusLocations+[des]
+                print(shiftBusLocations,busesToTake)
                 bsd = []
                 i,j = 0,1
-                while i<minShifts:
+                while i<len(busesToTake):
                     bsd.append((busesToTake[i],shiftBusLocations[i],shiftBusLocations[j]))
                     i+=1
                     j+=1
 
+                print(bsd)
                 travelDetails = {'bsd':bsd,'minShifts':minShifts,'busesToTake':busesToTake,'shiftBusLocations':shiftBusLocations}
                 return render_template('myTravel.html',travelDetails = travelDetails)
             else:
@@ -39,7 +41,12 @@ def home():
                 return redirect(url_for('home'))
     places = set()
     for route in cbe_transport.busRoutes:
-        places.update(route)
+        for place in route:
+            place = place.strip()
+            place = place.lower()
+            places.add(place)
+
+    places = sorted(list(places))
     return render_template('index.html',places = places)
 
 @app.route('/addBus')
@@ -49,6 +56,8 @@ def addBus():
 if __name__ == "__main__":
     df = pd.read_csv('static/dataset/buses.csv')
     for index, row in df.iterrows():
+        if index == 10:
+            break
         #print(row['Bus No'], row['Via'])
         busName = row['Bus No']
         busRoute = row['Via'].split(',')

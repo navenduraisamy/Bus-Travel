@@ -58,22 +58,32 @@ class BusRoute:
         return -1
     
     #dfs
-    def takeBuses(self,source,destination):
+    def takeBuses(self,source,destination,expected):
         if source == destination:
             return []
         
         possibleBoardings = []
         visited = set()
+        memo = {}
         def dfs(busId,sofar):
+            #print(busId)
+            if((busId,destination) in memo) and len(sofar)>len(memo[(busId,destination)]):
+                return memo[(busId,destination)]
             if destination in self.busRoutes[busId]:
                 possibleBoardings.append(sofar+[self.nameMappings[busId]])
+                memo[(busId,destination)] = sofar+[self.nameMappings[busId]]
                 return
             
+            nonlocal expected
+            if len(sofar)>expected:
+                print("returning")
+                return 
             visited.add(busId)
+
             for bus in self.adj[busId]:
                 if bus not in visited:
                     dfs(bus,sofar+[self.nameMappings[busId]])
-            #visited.remove(busId)
+            visited.remove(busId)
         
         for i in range(self.busCount):
             if source in self.busRoutes[i]:
